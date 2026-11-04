@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Dar de baja{% endblock %}
+{% block content %}
+<div class="card border-danger">
+  <div class="card-body">
+    <h1 class="h4">¿Dar de baja el vuelo {{ vuelo.codigo_vuelo }}?</h1>
+    <p>{{ vuelo.origen }} → {{ vuelo.destino }}. El vuelo dejará de mostrarse en el catálogo público, pero no se borra de la base de datos (puedes reactivarlo después).</p>
+    <form method="post" class="d-flex gap-2">
+      {% csrf_token %}
+      <button class="btn btn-danger" type="submit">Sí, dar de baja</button>
+      <a href="{% url 'catalogo:gestion' %}" class="btn btn-outline-secondary">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

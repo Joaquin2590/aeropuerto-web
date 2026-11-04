@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Vuelos{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Vuelos disponibles</h1>
+
+<form method="get" class="card card-body mb-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-12 col-md-4">
+      <label class="form-label small mb-1" for="q">Buscar</label>
+      <input type="search" id="q" name="q" value="{{ q }}" class="form-control"
+             placeholder="Código, origen, destino o descripción">
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="aerolinea">Aerolínea</label>
+      <select id="aerolinea" name="aerolinea" class="form-select">
+        <option value="">Todas</option>
+        {% for a in aerolineas %}
+          <option value="{{ a.id|stringformat:'s' }}" {% if aerolinea_sel == a.id|stringformat:"s" %}selected{% endif %}>{{ a.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="estado">Estado</label>
+      <select id="estado" name="estado" class="form-select">
+        <option value="">Todos</option>
+        {% for valor, etiqueta in estados %}
+          <option value="{{ valor }}" {% if estado_sel == valor %}selected{% endif %}>{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-1" for="orden">Ordenar por</label>
+      <select id="orden" name="orden" class="form-select">
+        <option value="fecha" {% if orden_sel == 'fecha' %}selected{% endif %}>Fecha de salida</option>
+        <option value="tarifa" {% if orden_sel == 'tarifa' %}selected{% endif %}>Tarifa (menor)</option>
+        <option value="-tarifa" {% if orden_sel == '-tarifa' %}selected{% endif %}>Tarifa (mayor)</option>
+        <option value="destino" {% if orden_sel == 'destino' %}selected{% endif %}>Destino (A-Z)</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2 d-grid">
+      <button class="btn btn-primary" type="submit">Filtrar</button>
+    </div>
+  </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  {% for v in page %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        {% if v.imagen %}
+          <img src="{{ v.imagen.url }}" class="card-img-top tarjeta-img" alt="Destino {{ v.destino }}">
+        {% endif %}
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h5 class="card-title">{{ v.destino }}</h5>
+            <span class="badge {% if v.estado == 'CAN' %}bg-danger{% elif v.estado == 'RET' %}bg-warning text-dark{% elif v.estado == 'EMB' %}bg-success{% else %}bg-secondary{% endif %}">{{ v.get_estado_display }}</span>
+          </div>
+          <p class="card-subtitle text-muted small mb-2">{{ v.codigo_vuelo }} · {{ v.aerolinea }}</p>
+          <p class="mb-1">{{ v.origen }} → {{ v.destino }}</p>
+          <p class="mb-1 small">{{ v.fecha_salida|date:"d/m/Y H:i" }}</p>
+          <p class="fw-bold mb-0">${{ v.tarifa }} <span class="small text-muted fw-normal">por pasajero</span></p>
+          <p class="small text-muted mb-0">{{ v.cupos_disponibles }} cupos disponibles</p>
+        </div>
+        <div class="card-footer bg-white border-0">
+          <a href="{{ v.get_absolute_url }}" class="btn btn-outline-primary w-100">Ver detalle</a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="alert alert-info">No se encontraron vuelos con esos criterios.</div></div>
+  {% endfor %}
+</div>
+
+{% if page.has_other_pages %}
+<nav class="mt-4" aria-label="Paginación">
+  <ul class="pagination justify-content-center">
+    {% if page.has_previous %}
+      <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.previous_page_number }}">Anterior</a></li>
+    {% endif %}
+    {% for n in page.paginator.page_range %}
+      <li class="page-item {% if n == page.number %}active{% endif %}">
+        <a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ n }}">{{ n }}</a>
+      </li>
+    {% endfor %}
+    {% if page.has_next %}
+      <li class="page-item"><a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page.next_page_number }}">Siguiente</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

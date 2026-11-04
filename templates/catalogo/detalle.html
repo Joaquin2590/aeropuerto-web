@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ vuelo.codigo_vuelo }}{% endblock %}
+{% block content %}
+<a href="{% url 'catalogo:lista' %}" class="btn btn-link px-0">← Volver al catálogo</a>
+<div class="card shadow-sm">
+  <div class="row g-0">
+    <div class="col-md-5">
+      {% if vuelo.imagen %}
+        <img src="{{ vuelo.imagen.url }}" class="img-fluid rounded-start w-100 h-100 detalle-img" alt="Destino {{ vuelo.destino }}">
+      {% endif %}
+    </div>
+    <div class="col-md-7">
+      <div class="card-body">
+        <h1 class="h3">{{ vuelo.origen }} → {{ vuelo.destino }}</h1>
+        <p class="text-muted">{{ vuelo.codigo_vuelo }} · {{ vuelo.aerolinea }}</p>
+        <p>{{ vuelo.descripcion|default:"Sin descripción." }}</p>
+        <ul class="list-unstyled">
+          <li><strong>Salida:</strong> {{ vuelo.fecha_salida|date:"d/m/Y H:i" }}</li>
+          <li><strong>Estado:</strong> {{ vuelo.get_estado_display }}</li>
+          <li><strong>Cupos disponibles:</strong> {{ vuelo.cupos_disponibles }}</li>
+          <li><strong>Tarifa:</strong> ${{ vuelo.tarifa }} por pasajero</li>
+        </ul>
+
+        {% if vuelo.reservable %}
+          <form method="post" action="{% url 'reservas:agregar' vuelo.codigo_vuelo %}" class="row g-2 align-items-end">
+            {% csrf_token %}
+            <div class="col-6 col-sm-4">
+              <label class="form-label small mb-1" for="pasajeros">Pasajeros</label>
+              <input type="number" id="pasajeros" name="pasajeros" value="1" min="1" max="{{ vuelo.cupos_disponibles }}" class="form-control">
+            </div>
+            <div class="col-6 col-sm-8 d-grid">
+              <button class="btn btn-primary" type="submit">Agregar a mi carpeta</button>
+            </div>
+          </form>
+        {% else %}
+          <div class="alert alert-warning mb-0">Este vuelo no está disponible para reserva.</div>
+        {% endif %}
+
+        {% if user.is_staff %}
+          <hr>
+          <a href="{% url 'catalogo:editar' vuelo.codigo_vuelo %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+          <a href="{% url 'catalogo:eliminar' vuelo.codigo_vuelo %}" class="btn btn-sm btn-outline-danger">Dar de baja</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

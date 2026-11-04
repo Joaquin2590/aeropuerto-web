@@ -1,0 +1,3 @@
+.tarjeta-img { height: 180px; object-fit: cover; }
+.detalle-img { object-fit: cover; min-height: 260px; }
+.navbar-brand { letter-spacing: .5px; }

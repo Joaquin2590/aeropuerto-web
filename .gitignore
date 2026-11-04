@@ -1,0 +1,19 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Secretos
+.env
+
+# Base de datos local y archivos subidos
+db.sqlite3
+media/
+
+# Editor / SO
+.vscode/
+.idea/
+.DS_Store

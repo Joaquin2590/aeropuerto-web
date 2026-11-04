@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Mi carpeta{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Mi carpeta de reserva</h1>
+
+{% if items %}
+  {% if hay_problemas %}
+    <div class="alert alert-warning">Algunos vuelos ya no tienen cupos suficientes o fueron cancelados. Ajusta o elimina esos vuelos para continuar.</div>
+  {% endif %}
+  <div class="table-responsive">
+    <table class="table align-middle bg-white">
+      <thead class="table-light">
+        <tr><th>Vuelo</th><th>Ruta</th><th class="text-end">Tarifa</th><th style="width:190px">Pasajeros</th><th class="text-end">Subtotal</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for i in items %}
+        <tr class="{% if i.excede_cupos %}table-warning{% endif %}">
+          <td><a href="{{ i.vuelo.get_absolute_url }}">{{ i.vuelo.codigo_vuelo }}</a><div class="small text-muted">{{ i.vuelo.aerolinea }}</div></td>
+          <td>{{ i.vuelo.origen }} → {{ i.vuelo.destino }}<div class="small text-muted">{{ i.vuelo.cupos_disponibles }} cupos</div></td>
+          <td class="text-end">${{ i.vuelo.tarifa }}</td>
+          <td>
+            <form method="post" action="{% url 'reservas:modificar' i.vuelo.codigo_vuelo %}" class="input-group input-group-sm">
+              {% csrf_token %}
+              <input type="number" name="pasajeros" value="{{ i.pasajeros }}" min="1" max="{{ i.vuelo.cupos_disponibles }}" class="form-control" aria-label="Pasajeros">
+              <button class="btn btn-outline-primary" type="submit">Actualizar</button>
+            </form>
+          </td>
+          <td class="text-end">${{ i.subtotal }}</td>
+          <td>
+            <form method="post" action="{% url 'reservas:quitar' i.vuelo.codigo_vuelo %}">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger" type="submit">Quitar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col-md-5">
+      <ul class="list-group mb-3">
+        <li class="list-group-item d-flex justify-content-between"><span>Subtotal</span><span>${{ subtotal }}</span></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Tasa de embarque ({{ pasajeros_total }} pasajero{{ pasajeros_total|pluralize }})</span><span>${{ tasa_embarque }}</span></li>
+        <li class="list-group-item d-flex justify-content-between"><span>IVA (19%)</span><span>${{ iva }}</span></li>
+        <li class="list-group-item d-flex justify-content-between fw-bold fs-5"><span>Total</span><span>${{ total }}</span></li>
+      </ul>
+      <div class="d-flex gap-2 justify-content-end">
+        <form method="post" action="{% url 'reservas:vaciar' %}">
+          {% csrf_token %}
+          <button class="btn btn-outline-secondary" type="submit">Vaciar carpeta</button>
+        </form>
+        <form method="post" action="{% url 'reservas:confirmar' %}">
+          {% csrf_token %}
+          <button class="btn btn-success" type="submit" {% if hay_problemas %}disabled{% endif %}>Confirmar reserva</button>
+        </form>
+      </div>
+      {% if not user.is_authenticated %}
+        <p class="small text-muted text-end mt-2">Te pediremos iniciar sesión para confirmar.</p>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info">Tu carpeta está vacía. <a href="{% url 'catalogo:lista' %}">Explora los vuelos</a>.</div>
+{% endif %}
+{% endblock %}

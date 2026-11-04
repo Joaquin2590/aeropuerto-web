@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Gestión de vuelos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Gestión de vuelos</h1>
+  <a href="{% url 'catalogo:crear' %}" class="btn btn-primary">+ Nuevo vuelo</a>
+</div>
+<div class="table-responsive">
+  <table class="table table-hover align-middle bg-white">
+    <thead class="table-light">
+      <tr><th>Código</th><th>Ruta</th><th>Aerolínea</th><th>Salida</th><th>Tarifa</th><th>Cupos</th><th>Estado</th><th>Vigente</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for v in vuelos %}
+      <tr class="{% if not v.activo %}table-secondary text-muted{% endif %}">
+        <td>{{ v.codigo_vuelo }}</td>
+        <td>{{ v.origen }} → {{ v.destino }}</td>
+        <td>{{ v.aerolinea }}</td>
+        <td>{{ v.fecha_salida|date:"d/m/Y H:i" }}</td>
+        <td>${{ v.tarifa }}</td>
+        <td>{{ v.cupos_disponibles }}</td>
+        <td>{{ v.get_estado_display }}</td>
+        <td>{% if v.activo %}Sí{% else %}No{% endif %}</td>
+        <td class="text-nowrap">
+          <a href="{% url 'catalogo:editar' v.codigo_vuelo %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+          {% if v.activo %}
+            <a href="{% url 'catalogo:eliminar' v.codigo_vuelo %}" class="btn btn-sm btn-outline-danger">Dar de baja</a>
+          {% else %}
+            <form method="post" action="{% url 'catalogo:reactivar' v.codigo_vuelo %}" class="d-inline">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-success" type="submit">Reactivar</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
