@@ -1,17 +1,21 @@
 # AeroConecta Chile — Aeropuerto y reserva de vuelos
 
-Proyecto de la **Evaluación Sumativa N°3 · Programación Back End (TI3041)** — Django + Bootstrap 5.
+Bictácora de la unidad 3 y la unidad 4
+
+## Fecha idea: 22-10-2026
 
 ## Ficha de registro
 
 | Campo | Detalle |
 | --- | --- |
 | Nombre de la Organización | AeroConecta Chile |
-| Modelo de Negocio / Giro | Aeropuerto, gestión y reserva de vuelos |
-| Integrantes del Equipo | Joaquín — *RUT* · *Integrante 2 — RUT* |
+| Modelo de Negocio | Aeropuerto, gestión y reserva de vuelos |
+| Integrantes del Equipo | Joaquín Rodríguez — *21675169-8*|
 | Entidad de Contexto (ORM) | `Aerolinea` |
 | Entidad Principal Gestionable (ORM) | `Vuelo` |
 | Propósito de la Sesión (`request.session`) | Carpeta de reserva de vuelos con cálculo de tasa de embarque e IVA y control de cupos |
+
+## fecha de inicio: 27-10-26 
 
 ## Funcionalidades
 
@@ -20,23 +24,25 @@ Proyecto de la **Evaluación Sumativa N°3 · Programación Back End (TI3041)** 
 - **Backoffice** (`/gestion/`, solo `is_staff`): crear, editar y dar de baja (con pantalla de confirmación) / reactivar vuelos. Además, Django Admin personalizado.
 - **Usuarios**: registro (con RUT validado y teléfono), login, logout (POST) y perfil con rol institucional.
 
-## Instalación paso a paso
+## Básico git
 
 ```bash
-# 1. Clonar y entrar a la carpeta
+# 1. Clonar
 git clone https://github.com/Joaquin2590/aeropuerto-web.git
 cd aeropuerto-web
+git add .
+git commit -m "proyector terminado"
+git push origin main
 
 # 2. Entorno virtual
 python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # Linux / macOS
+.venv\Scripts\activate          
 
 # 3. Dependencias
 pip install -r requirements.txt
 
 # 4. Variables de entorno
-copy .env.example .env          # Windows  (Linux/macOS: cp .env.example .env)
+copy .env.example .env       
 # Edita .env y define SECRET_KEY
 
 # 5. Base de datos y datos de prueba
@@ -61,6 +67,8 @@ Abrir <http://127.0.0.1:8000/> · Admin: <http://127.0.0.1:8000/admin/>
 ```bash
 python manage.py test
 ```
+
+# fecha 04-11-2026
 
 ## Bitácora de prompts (uso de IA)
 
